@@ -1,4 +1,0 @@
--module(p1).
-
--export([answer/0]).
-
