@@ -1,0 +1,8 @@
+-module(p7).
+
+-export([answer/0]).
+
+%% 
+
+answer() ->
+    .

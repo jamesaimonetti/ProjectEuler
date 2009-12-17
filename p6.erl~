@@ -1,0 +1,6 @@
+-module(p6).
+
+-export([answer/0]).
+
+-compile(export_all).
+

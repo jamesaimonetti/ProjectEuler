@@ -1,0 +1,103 @@
+-module(primes).
+
+-export([queue/1, nth/1, is_prime/1]).
+
+%% use a priority queue, or skew heap, to store interators for primes
+queue(N) ->
+    sieve_queue(lists:seq(2, N)).
+
+sieve_queue([]) ->
+    [];
+sieve_queue([X|XS]) ->
+    Table = insert_prime(X, skew_kv:empty()),
+    [X | sieve_queue(XS, Table)].
+
+insert_prime(P, Table) ->
+    skew_kv:insert(P*P, from(P*P, P), Table).
+
+sieve_queue([], _Table) ->
+    [];
+sieve_queue([X|XS], Table) ->
+    {NextComposite, _Value} = skew_kv:min(Table),
+    case  NextComposite =< X of
+        true -> sieve_queue(XS, adjust(Table, X));
+        _Else -> [X | sieve_queue(XS, insert_prime(X, Table))]
+    end.
+
+adjust(Table, X) ->
+    {N, [Nprime | NS]} = skew_kv:min(Table),
+    case N =< X of
+        true ->
+            T = skew_kv:delete_min(Table),
+            T2 = skew_kv:insert(Nprime, NS(), T),
+            adjust(T2, X);
+        _Else -> Table
+    end.
+
+%% from http://www.erlang.org/cgi-bin/ezmlm-cgi?4:mss:177:khdaceipfabbicmifdhf
+%% a lazy list that starts at K and increments by Inc
+from(K, Inc) ->
+    [K|fun()-> from(K+Inc, Inc) end].
+
+%% returns the nth prime
+%% nth(1) -> 2
+%% nth(2) -> 3
+%% nth(3) -> 5
+nth(1) -> 2;
+nth(2) -> 3;
+nth(N) ->
+    nth(N-2, 4).
+
+nth(0, Prime) -> Prime;
+nth(N, Prime) ->
+    nth(N-1, next_prime(Prime+1)).
+
+next_prime(PossiblePrime) ->
+    case is_prime(PossiblePrime) of
+        true -> PossiblePrime;
+        _Else -> next_prime(PossiblePrime+1)
+    end.
+
+%% primality test of N
+is_prime(2) -> true;
+is_prime(3) -> true;
+is_prime(N) when N rem 2 =:= 0 orelse N rem 3 =:= 0 -> false;
+is_prime(N) ->
+    Sqrt = round(math:sqrt(N)),
+    is_prime(N, 1, Sqrt).
+
+is_prime(N, K, Sqrt) when 6*K+1 =< Sqrt ->
+    K1 = 6*K+1,
+    K2 = 6*K-1,
+    case N rem K1 =:= 0 orelse N rem K2 =:= 0 of
+        true -> false;
+        _Else -> is_prime(N, K+1, Sqrt)
+    end;
+is_prime(_N, _K, _Sqrt) -> true.
+
+%% returns a list of primes < N
+unfaithful(N) ->
+    unfaithful_sieve(lists:seq(3, N,2), [2]).
+
+unfaithful_sieve([], Sieve) -> lists:reverse(Sieve);
+unfaithful_sieve([H | T], Sieve) ->
+    Rest = [ X || X <- T, X rem H =/= 0],
+    unfaithful_sieve(Rest, [H | Sieve]).
+
+%% adapted from http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+map(N) ->
+    sieve_map(lists:seq(2, N)).
+
+sieve_map(XS) ->
+    sieve_map(XS, dict:new()).
+sieve_map([], _Table) -> [];
+sieve_map([X|XS], Table) ->
+    Reinsert = fun(Prime, Tbl) ->
+                       dict:append(X+Prime, Prime, Tbl)
+               end,
+    case dict:find(X, Table) of
+        error -> [X | sieve_map(XS, dict:store(X*X, [X], Table))];
+        { ok, Facts } -> T = dict:erase(X, Table),
+                         T2 = lists:foldl(Reinsert, T, Facts),
+                         sieve_map(XS, T2)
+    end.
