@@ -3,6 +3,8 @@
 -export([queue/1, nth/1, is_prime/1, lazy_sieve/0]).
 
 %% use a priority queue, or skew heap, to store interators for primes
+queue(2) -> [2];
+queue(N) when N < 2 -> [];
 queue(N) ->
     sieve_queue(lists:seq(2, N)).
 
