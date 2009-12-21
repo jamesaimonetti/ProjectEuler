@@ -1,6 +1,11 @@
 -module(primes).
 
--export([queue/1, nth/1, is_prime/1, lazy_sieve/0]).
+-export([queue/1,
+         nth/1,
+         is_prime/1,
+         lazy_sieve/0,
+         prime_factors/1
+        ]).
 
 %% use a priority queue, or skew heap, to store interators for primes
 queue(2) -> [2];
@@ -81,3 +86,19 @@ is_prime(N, K, Sqrt) when 6*K+1 =< Sqrt ->
         _Else -> is_prime(N, K+1, Sqrt)
     end;
 is_prime(_N, _K, _Sqrt) -> true.
+
+
+prime_factors(N) ->
+    CandidatePrimes = primes:queue(N div 2),
+    PrimeFactors = [ X || X <- CandidatePrimes, N rem X =:= 0 ],
+    find_factors(PrimeFactors, N, 0, []).
+
+%% X is a prime factor, N is what's left, C is the count for X, L is the prime factor and count of exponents
+%% returns a list of primes and their exponents of the factorization
+%% so if 108 factors to 2^2 * 3^3, first arg will be [2, 3] and return [{2,2},{3,3}]
+find_factors([], _N, _C, L) -> lists:reverse(L);
+find_factors([X | _T], 1, C, L) -> lists:reverse([{X, C} | L]);
+find_factors([X | T], N, C, L) when N rem X =:= 0 ->
+    find_factors([X | T], N div X, C+1, L);
+find_factors([X | T], N, C, L) ->
+    find_factors(T, N, 0, [{X, C} | L]).

@@ -28,21 +28,7 @@ find_factors([Tri | Next], NumFactors) ->
     end.
 
 count_factors(N) ->
-    CandidatePrimes = primes:queue(round(math:sqrt(N))),
-    PrimeFactors = [ X || X <- CandidatePrimes, N rem X =:= 0 ],
-    Combos = combos(PrimeFactors, N, 0, []),
-    lists:foldl(fun({_Prime, C}, Acc) -> Acc*(C+1) end, 1, Combos).
-
-%% X is a prime factor, N is what's left, C is the count for X, L is the prime factor and count of exponents
-%% returns a list of primes and their exponents of the factorization
-%% so if 108 factors to 2^2 * 3^3, first arg will be [2, 3] and return [{2,2},{3,3}]
-combos([], _N, _C, L) -> L;
-combos([X | _T], 1, C, L) ->
-    [{X, C} | L];
-combos([X | T], N, C, L) when N rem X =:= 0 ->
-    combos([X | T], N div X, C+1, L);
-combos([X | T], N, C, L) ->
-    combos(T, N, 0, [{X, C} | L]).
+    lists:foldl(fun({_Prime, C}, Acc) -> Acc*(C+1) end, 1, primes:prime_factors(N)).
 
 triangle_iterator() ->
     fun() -> tri_iter(2, 1) end.
