@@ -18,9 +18,14 @@
 %% Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum
 %% number of primes for consecutive values of n, starting with n = 0.
 
+%% My Notes
+%% From the forum, we learn that B must be prime (0^2+0*A+B = B) to start a sequence off
+%% Next, we learn that A must be odd, so that N*N + A*N is always even, which, when summed with
+%% B, will be odd - required to continue primality in the sequence.
+
 answer() ->
-    As = lists:seq(-999,999),
-    B = 971, % from the forum, B being prime will yield the longest sequence, and 971 is the largest prime < 1000
+    As = lists:seq(-999,999, 2),
+    B = 971,
     Ps = lists:map(fun(A) -> { A, primes(0, A, B, 0) } end, As),
     {A, _Count } = lists:foldl(fun({_NewA, NewP}=New, {_CurA, CurP}=Cur) ->
                                        case NewP > CurP of
