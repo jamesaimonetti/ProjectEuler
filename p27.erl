@@ -20,20 +20,17 @@
 
 answer() ->
     As = lists:seq(-999,999),
-    Bs = lists:seq(-999,999),
-    find_answer(As, Bs, {0, 0, 0}).
+    B = 971, % from the forum, B being prime will yield the longest sequence, and 971 is the largest prime < 1000
+    Ps = lists:map(fun(A) -> { A, primes(0, A, B, 0) } end, As),
+    {A, _Count } = lists:foldl(fun({_NewA, NewP}=New, {_CurA, CurP}=Cur) ->
+                                       case NewP > CurP of
+                                           true -> New;
+                                           false -> Cur
+                                       end
+                               end, {0, 0}, Ps),
+    A*B.
 
-find_answer([], _Bs, {A, B, _PrimeCount}) -> A*B;
-find_answer([A|As], Bs, Ans) ->
-    Ps = lists:map(fun(B) -> {A, B, primes(0, A, B, 0)} end, Bs),
-    NewAns = lists:foldl(fun({_A1, _B1, P1}=New, {_A2, _B2, P2}=Old) ->
-                                 case P1 > P2 of
-                                     true -> New;
-                                     false -> Old
-                                 end
-                         end, Ans, Ps),
-    find_answer(As, Bs, NewAns).
-
+% count how many consecutive primes, starting at N=0
 primes(N, A, B, P) ->
     Eq = round(abs(eq(N, A, B))),
     case primes:is_prime(Eq) of
