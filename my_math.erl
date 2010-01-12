@@ -1,6 +1,15 @@
 -module(my_math).
 
--export([gcd/1, gcd/2, lcm/1, lcm/2, perms/2, fac/1]).
+-export([gcd/1, gcd/2,
+         lcm/1, lcm/2,
+         perms/2,
+         fac/1,
+         fib/1,
+         fib_generator/0,
+         d/1,
+         proper_divisors/1]).
+
+-define(GOLD_RATIO, (1 + math:sqrt(5)) / 2).
 
 %% Euler's Algorithm
 gcd(A, 0) -> A;
@@ -28,5 +37,19 @@ fac(X) ->
 fac(0, F) -> F;
 fac(1, F) -> F;
 fac(X, F) -> fac(X-1, F*X).
-    
-               
+
+%% restricted divisor function
+d(N) -> lists:sum(proper_divisors(N)).
+
+proper_divisors(N) -> [ X || X <- lists:seq(1, N-1), N rem X =:= 0].
+
+%% returns the Nth fibonacci number where
+%% {F1, 1}, {F2, 1}, {F3, 2}, {F4, 3},...
+fib(Nth) ->
+    round((math:pow(?GOLD_RATIO, Nth) - math:pow(( 1 - ?GOLD_RATIO ), Nth)) / math:sqrt(5)).
+
+fib_generator() ->
+    fib_generator(0, 1, 1).
+
+fib_generator(A, B, N) ->
+    [{N,B} | fun() -> fib_generator(B, A+B, N+1) end ].

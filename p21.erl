@@ -11,12 +11,7 @@
 % relies on rvirding/rb reb-black tree implementation: http://github.com/rvirding/rb
 answer() ->
     Nums = lists:seq(1,10000),
-    Ds = lists:map(fun(N) -> {N, d(N)} end, Nums),
+    Ds = lists:map(fun(N) -> {N, my_math:d(N)} end, Nums),
     Tree = rbdict:from_list(Ds),
     Amicable = lists:filter(fun(X) -> {ok, Y} = rbdict:find(X, Tree), { ok, X} =:= rbdict:find(Y, Tree) andalso X =/= Y end, Nums),
-    lists:sum(Amicable).                
-
-d(N) -> lists:sum(proper_divisors(N)).
-
-proper_divisors(N) ->
-    lists:usort([1 | lists:flatten([ [X, N div X] || X <- lists:seq(2, round(math:sqrt(N)) + 1), N rem X =:= 0, X < N])]).
+    lists:sum(Amicable).

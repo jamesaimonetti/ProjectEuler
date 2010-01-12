@@ -76,7 +76,7 @@ is_prime(3) -> true;
 is_prime(N) when N rem 2 =:= 0 orelse N rem 3 =:= 0 -> false;
 is_prime(N) ->
     Sqrt = round(math:sqrt(N)),
-    is_prime(N, 1, Sqrt).
+    is_prime(N, 1, Sqrt+1).
 
 is_prime(N, K, Sqrt) when 6*K+1 =< Sqrt ->
     K1 = 6*K+1,
