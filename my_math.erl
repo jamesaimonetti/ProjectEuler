@@ -7,6 +7,10 @@
          fib/1,
          fib_generator/0,
          d/1,
+         modpow/3,
+         totient/1,
+         floor/1,
+         ceiling/1,
          proper_divisors/1]).
 
 -define(GOLD_RATIO, (1 + math:sqrt(5)) / 2).
@@ -53,3 +57,42 @@ fib_generator() ->
 
 fib_generator(A, B, N) ->
     [{N,B} | fun() -> fib_generator(B, A+B, N+1) end ].
+
+%% finds C in the equation C ≡ B^E rem M
+modpow(B, E, M) ->
+    modpow(B, E, M, 1).
+
+modpow(_B, E, _M, R) when E =< 0 -> R;
+modpow(B, E, M, R) ->
+    R1 = case E band 1 =:= 1 of
+             true -> (R * B) rem M;
+             false  -> R
+         end,
+    modpow( (B*B) rem M, E bsr 1, M, R1).
+
+floor(X) ->
+    T = erlang:trunc(X),
+    case (X - T) of
+        Neg when Neg < 0 -> T - 1;
+        Pos when Pos > 0 -> T;
+        _ -> T
+    end.
+
+ceiling(X) ->
+    T = erlang:trunc(X),
+    case (X - T) of
+        Neg when Neg < 0 -> T;
+        Pos when Pos > 0 -> T + 1;
+        _ -> T
+    end.
+
+% Euler's phi-function
+totient(1) -> 1;
+totient(N) ->
+    case primes:is_prime(N) of
+        false ->
+            Factors = primes:prime_factors(N),
+            round(lists:foldl(fun({P, _C}, Acc) -> Acc * (1 - ( 1 / P ) ) end, N, Factors));
+        true ->
+            N-1
+    end.
