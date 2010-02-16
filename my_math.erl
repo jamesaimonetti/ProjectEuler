@@ -2,7 +2,7 @@
 
 -export([gcd/1, gcd/2,
          lcm/1, lcm/2,
-         perms/2,
+         perms/1, perms/2,
          fac/1,
          fib/1,
          fib_generator/0,
@@ -34,6 +34,10 @@ lcm([A, B | L]) ->
 %% the number of permutations of a set of N in a groups of R
 perms(N, R) ->
     fac(N) div fac(N-R).
+
+perms([]) -> [[]];
+perms(L) ->
+    [ [H|T] || H <- L, T <- perms(L--[H]) ].
 
 fac(X) ->
     fac(X, 1).

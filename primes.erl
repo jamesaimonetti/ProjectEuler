@@ -47,6 +47,7 @@ from(K, Inc) ->
     [ K | fun()-> from(K+Inc, Inc) end ].
 
 %% prime number iterator
+%% [ { Prime, Position } | Rest() ]
 lazy_sieve() ->
     Table = insert_prime(2, skew_kv:empty()),
     [ { 2, 1 } | fun() -> lazy_sieve({ 3, 2 }, Table) end ].
