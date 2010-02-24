@@ -22,7 +22,7 @@
 -compile(export_all).
 
 answer() ->
-    find_term_by_length(3).
+    find_term_by_length(1000).
 
 %% find the first term that has L digits
 find_term_by_length(L) ->
