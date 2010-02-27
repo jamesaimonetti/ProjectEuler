@@ -13,9 +13,6 @@
 -compile(export_all).
 
 answer() ->
-    find().
-
-find() ->
     Pdig = [ X*Y || X <- lists:seq(1,100),
                     Y <- lists:seq(101,2000),
                     is_pandigital(lists:flatten([integer_to_list(X), integer_to_list(Y), integer_to_list(X*Y)])) ],
