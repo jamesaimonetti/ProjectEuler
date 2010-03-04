@@ -11,6 +11,7 @@
          totient/1,
          floor/1,
          ceiling/1,
+         is_palindrome/1,
          proper_divisors/1]).
 
 -define(GOLD_RATIO, (1 + math:sqrt(5)) / 2).
@@ -100,3 +101,7 @@ totient(N) ->
         true ->
             N-1
     end.
+
+is_palindrome(N) ->
+    Str = integer_to_list(N),
+    Str =:= lists:reverse(Str).
