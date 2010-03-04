@@ -102,6 +102,7 @@ totient(N) ->
             N-1
     end.
 
-is_palindrome(N) ->
-    Str = integer_to_list(N),
-    Str =:= lists:reverse(Str).
+is_palindrome(N) when is_integer(N) ->
+    is_palindrome(integer_to_list(N));
+is_palindrome(L) ->
+    L =:= lists:reverse(L).
