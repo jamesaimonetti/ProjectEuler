@@ -6,21 +6,21 @@
 %% insert either nothing, a plus sign, or a multiplication sign, so that the
 %% resulting expression equals 2002. Operator precedence does apply.
 
-answer() -> find(lists:seq(1,9)).
+answer() -> find(lists:seq(1+$0,9+$0)).
 
 find(L) -> build(L, []).
 
-build([], E) -> Ex = [$2, $0, $0, $2, $=,$:,$=] ++ lists:reverse(E) ++ [$.],
-                 case eval(Ex) of
-                     {value, true, _} ->
-                         io:format("E: ~p~n", [Ex]);
-                     _Else -> false
-                 end;
-build([H|T], []) -> build(T, [H+$0]);
+build([], E) -> Ex = lists:reverse([$., $2, $0, $0, $2, $=,$:,$= | E]),
+                case eval(Ex) of
+                    {value, true, _} ->
+                        io:format("E: ~p~n", [Ex]);
+                    _Else -> false
+                end;
+build([H|T], []) -> build(T, [H]);
 build([H|T], E) ->
-    build(T, [H+$0, $+ | E]),
-    build(T, [H+$0, $* | E]),
-    build(T, [H+$0 | E]).
+    build(T, [H, $+ | E]),
+    build(T, [H, $* | E]),
+    build(T, [H | E]).
 
 eval(S) ->
     {ok,Scanned,_} = erl_scan:string(S),
