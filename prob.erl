@@ -6,7 +6,7 @@
 %% insert either nothing, a plus sign, or a multiplication sign, so that the
 %% resulting expression equals 2002. Operator precedence does apply.
 
-answer() -> find(lists:seq(1+$0,9+$0)).
+answer() -> find(lists:seq($1,$9)).
 
 find(L) -> build(L, []).
 
