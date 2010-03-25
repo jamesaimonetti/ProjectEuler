@@ -21,7 +21,7 @@ answer() ->
 
 find(X, Cnt, Cnt) -> X-Cnt;
 find(X, Cnt, Fnd) ->
-    case length(prime_server:factors(X)) =:= Cnt of
+    case prime_server:count_factors(X) =:= Cnt of
         true ->
             find(X+1, Cnt, Fnd+1);
         false ->

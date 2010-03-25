@@ -6,7 +6,8 @@
          lazy_sieve/0,
          prime_factors/1,
          prime_factors/2,
-         count_factors/1
+         count_factors/1,
+         count_factors/2
         ]).
 
 %% use a priority queue, or skew heap, to store interators for primes
@@ -95,13 +96,13 @@ prime_factors(N, CandidatePrimes) ->
     find_factors(PrimeFactors, N, 0, []).
 
 prime_factors(N) ->
-    CandidatePrimes = primes:queue(N div 2),
-    PrimeFactors = [ X || X <- CandidatePrimes, N rem X =:= 0 ],
-    find_factors(PrimeFactors, N, 0, []).
+    prime_factors(N, primes:queue(N div 2)).
+
+count_factors(N, CandidatePrimes) ->
+    length([ X || X <- CandidatePrimes, N rem X =:= 0 ]).
 
 count_factors(N) ->
-    CandidatePrimes = primes:queue(N div 2),
-    length([ X || X <- CandidatePrimes, N rem X =:= 0 ]).
+    count_factors(N, primes:queue(N div 2)).
 
 %% X is a prime factor, N is what's left, C is the count for X, L is the prime factor and count of exponents
 %% returns a list of primes and their exponents of the factorization
