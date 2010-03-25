@@ -4,7 +4,9 @@
          nth/1,
          is_prime/1,
          lazy_sieve/0,
-         prime_factors/1
+         prime_factors/1,
+         prime_factors/2,
+         count_factors/1
         ]).
 
 %% use a priority queue, or skew heap, to store interators for primes
@@ -88,11 +90,18 @@ is_prime(N, K, Sqrt) when 6*K+1 =< Sqrt ->
     end;
 is_prime(_N, _K, _Sqrt) -> true.
 
+prime_factors(N, CandidatePrimes) ->
+    PrimeFactors = [ X || X <- CandidatePrimes, N rem X =:= 0 ],
+    find_factors(PrimeFactors, N, 0, []).
 
 prime_factors(N) ->
     CandidatePrimes = primes:queue(N div 2),
     PrimeFactors = [ X || X <- CandidatePrimes, N rem X =:= 0 ],
     find_factors(PrimeFactors, N, 0, []).
+
+count_factors(N) ->
+    CandidatePrimes = primes:queue(N div 2),
+    length([ X || X <- CandidatePrimes, N rem X =:= 0 ]).
 
 %% X is a prime factor, N is what's left, C is the count for X, L is the prime factor and count of exponents
 %% returns a list of primes and their exponents of the factorization
