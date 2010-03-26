@@ -16,7 +16,7 @@
 answer() ->
     prime_server:start_link(200000),
     Ans = find(2*3*5*7, 4, 0),
-    prime_server:terminate(ok, ok),
+    prime_server:stop(),
     Ans.
 
 find(X, Cnt, Cnt) -> X-Cnt;

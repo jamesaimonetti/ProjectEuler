@@ -4,7 +4,8 @@
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--export([start_link/0, start_link/1, sieve/1, factors/1, count_factors/1,
+-export([start_link/0, start_link/1, stop/0,
+         sieve/1, factors/1, count_factors/1,
          iterator/0, is_prime/1, nth/1]).
 
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -27,6 +28,8 @@ is_prime(N) -> gen_server:call(?MODULE, {is_prime, N}).
 
 %% what is the nth prime?
 nth(N) -> gen_server:call(?MODULE, {nth, N}).
+
+stop() -> gen_server:cast(?MODULE, stop).
 
 init([]) -> {ok, { 1000000, primes:queue(1000000)}};
 init([N]) -> {ok, { N, primes:queue(N)}}.
@@ -57,8 +60,10 @@ handle_call({is_prime, N}, _From, {_UpTo, Queue}=State) ->
 handle_call({nth, N}, _From, State) ->
     {reply, primes:nth(N), State};
 handle_call({iterator}, _From, State) ->
-    {reply, primes:lazy_sieve(), State}.
- 
+    {reply, primes:lazy_sieve(), State}. 
+
+handle_cast(stop, State) ->
+    {stop, normal, State};
 handle_cast(_Msg, State) -> {noreply, State}.
 handle_info(_Msg, State) -> {noreply, State}.
 terminate(_Reason, _State) -> ok.
