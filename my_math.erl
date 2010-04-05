@@ -12,6 +12,7 @@
          floor/1,
          ceiling/1,
          is_palindrome/1,
+         is_pandigital/1,
          proper_divisors/1]).
 
 -define(GOLD_RATIO, (1 + math:sqrt(5)) / 2).
@@ -106,3 +107,7 @@ is_palindrome(N) when is_integer(N) ->
     is_palindrome(integer_to_list(N));
 is_palindrome(L) ->
     L =:= lists:reverse(L).
+
+is_pandigital(N) when length(N) =:= 9 ->
+    lists:all(fun(D) -> lists:member(D, N) end, lists:seq($1, $9));
+is_pandigital(_) -> false.
