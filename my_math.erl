@@ -35,6 +35,8 @@ lcm([A, B | L]) ->
     lists:foldl(fun(X, Acc) -> lcm(X, Acc) end, lcm(A, B), L).
 
 %% the number of permutations of a set of N in a groups of R
+perms(L, N) when is_list(L) ->
+    lists:filter(fun(P) -> length(P) =:= N end, powerset(L));
 perms(N, R) ->
     fac(N) div fac(N-R).
 
